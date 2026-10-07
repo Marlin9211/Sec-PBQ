@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Security+ SY0-701 | Infection Trail PBQ Lab</title>
+<style>
+:root{
+  --bg:#07111f;--panel:#0d1b2e;--panel2:#11243b;--line:#29415e;--text:#eef6ff;
+  --muted:#a9bdd3;--cyan:#58d7ff;--green:#57e39b;--amber:#ffc857;--red:#ff6b78;
+}
+*{box-sizing:border-box} body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:
+radial-gradient(circle at 15% 0%,#143153 0,transparent 28%),var(--bg);color:var(--text)}
+button,select{font:inherit} .app{max-width:1280px;margin:auto;padding:24px}
+header{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:20px}
+.eyebrow{color:var(--cyan);font-weight:800;letter-spacing:.12em;font-size:.78rem}
+h1{font-size:clamp(1.7rem,3vw,2.7rem);margin:.35rem 0}.sub{color:var(--muted);max-width:850px;line-height:1.55}
+.badge{border:1px solid var(--line);background:#0b1728;padding:10px 14px;border-radius:999px;color:var(--cyan);white-space:nowrap}
+.progress{height:8px;background:#0b1728;border-radius:99px;overflow:hidden;margin:18px 0 24px}.bar{height:100%;width:16%;background:linear-gradient(90deg,var(--cyan),var(--green))}
+.grid{display:grid;grid-template-columns:1.05fr 1.6fr;gap:18px}.card{background:rgba(13,27,46,.94);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 12px 35px #0005}
+h2,h3{margin-top:0}.mission li{margin:10px 0;color:#d7e6f5;line-height:1.45}
+.tip{border-left:4px solid var(--amber);background:#171d29;padding:12px 14px;border-radius:8px;margin-top:14px;color:#f7e4ac}
+.network{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.node{padding:13px;border:1px solid var(--line);border-radius:12px;background:#0a1727;text-align:center}.node b{display:block}.node span{font-size:.82rem;color:var(--muted)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.tab{background:#0a1727;color:var(--muted);border:1px solid var(--line);padding:9px 12px;border-radius:9px;cursor:pointer}.tab.active{color:#06111e;background:var(--cyan);border-color:var(--cyan);font-weight:800}
+.log{background:#030912;border:1px solid #26384e;border-radius:12px;padding:14px;min-height:320px;overflow:auto;font:14px/1.6 Consolas,monospace;color:#cfe4f7;white-space:pre-wrap}
+.log .bad{color:#ff8892}.log .ok{color:#70efaa}.log .warn{color:#ffd477}.log .info{color:#75dfff}
+.legend{display:flex;gap:16px;flex-wrap:wrap;color:var(--muted);font-size:.86rem;margin-top:10px}
+.workspace{margin-top:18px}.hostrow{display:grid;grid-template-columns:1.1fr 1fr 2fr;gap:10px;align-items:center;padding:11px;border-bottom:1px solid #203750}.hostrow:first-of-type{border-top:1px solid #203750}
+select{width:100%;padding:10px;border-radius:8px;background:#07111f;color:var(--text);border:1px solid var(--line)}
+.evidence{color:var(--muted);font-size:.9rem}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.btn{border:0;border-radius:10px;padding:11px 16px;font-weight:800;cursor:pointer}.primary{background:var(--cyan);color:#06111e}.secondary{background:#172a42;color:var(--text);border:1px solid var(--line)}
+.feedback{display:none;margin-top:18px}.feedback.show{display:block}.result{padding:12px;border-radius:10px;margin:9px 0;background:#0a1727;border:1px solid var(--line);line-height:1.5}.correct{border-color:#2b9c6a}.incorrect{border-color:#a44750}
+.check{margin-top:18px}.q{padding:14px;background:#0a1727;border:1px solid var(--line);border-radius:12px;margin:10px 0}.q label{display:block;margin:8px 0;color:#d9e8f6}
+.score{font-size:1.15rem;font-weight:800;color:var(--cyan)}
+.hidden{display:none}.footer{color:var(--muted);font-size:.82rem;margin:22px 0 6px}
+@media(max-width:850px){.grid{grid-template-columns:1fr}.hostrow{grid-template-columns:1fr}.network{grid-template-columns:1fr 1fr}header{flex-direction:column}}
+</style>
+</head>
+<body><div class="app">
+<header><div><div class="eyebrow">COMPTIA SECURITY+ SY0-701 • ORIGINAL PRACTICE PBQ</div>
+<h1>Infection Trail: Origin • Infected • Clean</h1>
+<div class="sub">You are the incident analyst for Northstar Health Services. An EDR alert indicates a suspicious executable may have moved laterally through the workstation network. Correlate host and firewall logs, reconstruct the timeline, and classify each endpoint based on evidence—not assumptions.</div></div><div class="badge">SOC Investigation Lab</div></header>
+<div class="progress"><div class="bar" id="bar"></div></div>
+
+<div class="grid">
+<section class="card mission"><h2>1. Mission Brief</h2>
+<ul><li><b>Find the origin:</b> identify where the malicious chain begins based on the earliest confirmed execution.</li>
+<li><b>Find infected hosts:</b> look for evidence of successful execution or compromise after transfer.</li>
+<li><b>Identify clean hosts:</b> exposure alone does not equal compromise. Detection, blocking, or quarantine can prevent infection.</li>
+<li><b>Correlate timestamps:</b> the same network event can appear in multiple logs from different perspectives.</li></ul>
+<div class="tip"><b>Analyst mindset:</b> Do not classify a host because it merely contacted an infected machine. Ask: “What evidence proves the payload actually executed or was successfully contained?”</div>
+<h3 style="margin-top:18px">Environment</h3><div class="network">
+<div class="node"><b>WS-01</b><span>Finance</span></div><div class="node"><b>WS-02</b><span>HR</span></div><div class="node"><b>WS-03</b><span>Operations</span></div>
+<div class="node"><b>WS-04</b><span>Billing</span></div><div class="node"><b>WS-05</b><span>Executive</span></div><div class="node"><b>WS-06</b><span>Support</span></div></div></section>
+
+<section class="card"><h2>2. Evidence Console</h2><div class="tabs" id="tabs"></div><div class="log" id="log"></div>
+<div class="legend"><span>TCP 445 = SMB/file sharing</span><span>EDR = endpoint detection & response</span><span>SHA256 = file hash</span></div></section>
+</div>
+
+<section class="card workspace"><h2>3. Classification Workspace</h2>
+<p class="sub">Classify every endpoint. Use <b>one Origin</b>. “Clean” means the available evidence does not establish successful compromise.</p>
+<div id="rows"></div>
+<div class="actions"><button class="btn primary" onclick="submitPBQ()">Submit Investigation</button><button class="btn secondary" onclick="resetPBQ()">Reset</button><button class="btn secondary" onclick="toggleHelp()">Analyst Help</button></div>
+<div id="help" class="tip hidden"><b>How to investigate:</b> Start with the earliest timestamps. Follow the same filename/hash across systems. Match outbound connections to inbound connections. Then distinguish <i>received</i>, <i>blocked/quarantined</i>, and <i>executed</i>. Successful execution is stronger evidence of infection than detection alone.</div>
+<div id="feedback" class="feedback"></div>
+</section>
+
+<section class="card check"><h2>4. Comprehension Check</h2><p class="sub">These questions test the reasoning behind the PBQ rather than memorization.</p>
+<div class="q"><b>1. A malicious file reaches a host, but EDR quarantines it before execution. What is the strongest classification?</b>
+<label><input type="radio" name="q1" value="a"> Infected, because the file arrived</label><label><input type="radio" name="q1" value="b"> Clean, because successful compromise is not established</label><label><input type="radio" name="q1" value="c"> Origin, because EDR generated an alert</label></div>
+<div class="q"><b>2. Why are timestamps important when identifying the origin?</b>
+<label><input type="radio" name="q2" value="a"> They help reconstruct which malicious event happened first and how activity propagated</label><label><input type="radio" name="q2" value="b"> They prove every SMB connection is malicious</label><label><input type="radio" name="q2" value="c"> They reveal the password used by the attacker</label></div>
+<div class="q"><b>3. Which evidence most strongly supports an “infected” classification?</b>
+<label><input type="radio" name="q3" value="a"> A ping from an infected workstation</label><label><input type="radio" name="q3" value="b"> An SMB connection attempt that was blocked</label><label><input type="radio" name="q3" value="c"> The transferred malicious payload successfully executing on the endpoint</label></div>
+<button class="btn primary" onclick="checkQuiz()">Check Understanding</button><div id="quizfb" class="feedback"></div></section>
+<div class="footer">Training simulation only. This is an original practice scenario designed to build log-correlation and incident-analysis skills; it does not reproduce a live CompTIA exam item.</div>
+</div>
+<script>
+const data={
+"WS-01":`09:07:12  User login: j.meyer
+09:08:44  Browser download: invoice_viewer.exe
+09:08:51  SHA256: 7f9c...a221
+09:09:03  EDR: invoice_viewer.exe launched by explorer.exe
+09:09:06  EDR: suspicious PowerShell child process detected
+09:11:20  NET: outbound TCP/445 -> 10.20.5.22 (WS-02)
+09:13:42  NET: outbound TCP/445 -> 10.20.5.24 (WS-04)
+09:15:08  NET: outbound TCP/445 -> 10.20.5.25 (WS-05)`,
+"WS-02":`09:11:20  NET: inbound TCP/445 from 10.20.5.21 (WS-01)
+09:11:24  FILE: invoice_viewer.exe written to C:\\Users\\Public\\
+09:11:24  SHA256: 7f9c...a221
+09:11:39  PROCESS: invoice_viewer.exe started
+09:11:42  EDR: encoded PowerShell spawned
+09:12:18  NET: outbound TCP/445 -> 10.20.5.23 (WS-03)`,
+"WS-03":`09:12:18  NET: inbound TCP/445 from 10.20.5.22 (WS-02)
+09:12:22  EDR: invoice_viewer.exe detected during write
+09:12:23  EDR: file quarantined
+09:12:24  EDR: execution prevented
+09:12:26  EDR: remediation status SUCCESS
+09:18:00  No suspicious process activity observed`,
+"WS-04":`09:13:42  NET: inbound TCP/445 from 10.20.5.21 (WS-01)
+09:13:47  FILE: invoice_viewer.exe written to C:\\ProgramData\\
+09:13:47  SHA256: 7f9c...a221
+09:14:02  PROCESS: invoice_viewer.exe started
+09:14:05  EDR: credential-access behavior observed
+09:14:31  PROCESS: powershell.exe -enc [REDACTED]`,
+"WS-05":`09:15:08  FIREWALL: inbound TCP/445 from 10.20.5.21 (WS-01)
+09:15:08  FIREWALL ACTION: BLOCK
+09:15:09  No file created
+09:15:10  No process execution
+09:18:00  EDR scan: no matching malicious hash found`,
+"WS-06":`09:06:10  User login: s.patel
+09:10:30  DNS query: updates.vendor-example.net
+09:12:51  HTTPS connection to approved software repository
+09:16:00  Routine backup agent started
+09:18:00  EDR scan: no matching malicious hash found
+09:18:01  No suspicious SMB activity observed`
+};
+const answers={"WS-01":"Origin","WS-02":"Infected","WS-03":"Clean","WS-04":"Infected","WS-05":"Clean","WS-06":"Clean"};
+const why={
+"WS-01":"The earliest confirmed malicious execution occurs here at 09:09:03. The same file hash later appears on other systems, and WS-01 initiates SMB connections to multiple endpoints. Together, chronology + execution + outbound propagation make this the strongest origin.",
+"WS-02":"The file is received from WS-01, then actually starts at 09:11:39 and spawns suspicious encoded PowerShell. That is evidence of successful execution, not merely exposure.",
+"WS-03":"WS-03 receives an attempted transfer, but EDR detects the file during the write, quarantines it, explicitly prevents execution, and reports successful remediation. Exposure occurred; successful compromise is not established.",
+"WS-04":"The matching malicious hash is written and then executed. Credential-access behavior and encoded PowerShell follow, providing multiple post-execution indicators of compromise.",
+"WS-05":"The firewall blocks the inbound SMB connection. The log explicitly shows no file creation, no process execution, and no matching hash. A connection attempt is evidence of targeting, not successful infection.",
+"WS-06":"Its activity is routine and unrelated to the malicious hash/SMB chain. No matching malicious hash or suspicious SMB activity is present. Normal network activity should not be treated as compromise without supporting evidence."
+};
+let current="WS-01";
+function renderTabs(){let t=document.getElementById('tabs');t.innerHTML='';Object.keys(data).forEach(h=>{let b=document.createElement('button');b.className='tab '+(h===current?'active':'');b.textContent=h;b.onclick=()=>{current=h;renderTabs();renderLog()};t.appendChild(b)})}
+function renderLog(){let s=data[current].replaceAll('invoice_viewer.exe','<span class="warn">invoice_viewer.exe</span>').replaceAll('quarantined','<span class="ok">quarantined</span>').replaceAll('execution prevented','<span class="ok">execution prevented</span>').replaceAll('ACTION: BLOCK','<span class="ok">ACTION: BLOCK</span>').replaceAll('started','<span class="bad">started</span>').replaceAll('launched','<span class="bad">launched</span>').replaceAll('TCP/445','<span class="info">TCP/445</span>');document.getElementById('log').innerHTML=s}
+function renderRows(){let r=document.getElementById('rows');r.innerHTML='';Object.keys(data).forEach(h=>{r.innerHTML+=`<div class="hostrow"><b>${h}</b><select id="sel-${h}"><option value="">Choose...</option><option>Origin</option><option>Infected</option><option>Clean</option></select><div class="evidence">Record your conclusion after correlating this host with the others.</div></div>`})}
+function submitPBQ(){let filled=true,score=0,out='<h3>Investigation Debrief</h3>';Object.keys(answers).forEach(h=>{let v=document.getElementById('sel-'+h).value;if(!v)filled=false;if(v===answers[h])score++;out+=`<div class="result ${v===answers[h]?'correct':'incorrect'}"><b>${h}: ${answers[h]}</b> ${v===answers[h]?'✓':'— your selection: '+(v||'none')}<br><b>WHY THIS CLASSIFICATION FITS THE EVIDENCE:</b> ${why[h]}</div>`});if(!filled){out='<div class="tip"><b>Investigation incomplete:</b> classify all six hosts before submitting. You may still skip around the evidence tabs in any order.</div>'+out}out=`<div class="score">Score: ${score}/6</div>`+out;let f=document.getElementById('feedback');f.innerHTML=out;f.classList.add('show');document.getElementById('bar').style.width='72%';f.scrollIntoView({behavior:'smooth'})}
+function resetPBQ(){Object.keys(answers).forEach(h=>document.getElementById('sel-'+h).value='');document.getElementById('feedback').classList.remove('show');document.getElementById('bar').style.width='16%'}
+function toggleHelp(){document.getElementById('help').classList.toggle('hidden')}
+function checkQuiz(){const a={q1:'b',q2:'a',q3:'c'},exp={q1:'A host is not automatically infected because a malicious file reached it. Here, quarantine plus prevented execution means the defensive control stopped the compromise before successful execution.',q2:'Timestamps create the incident sequence. They help you trace an earlier execution to later transfers and distinguish a likely source from downstream victims.',q3:'Successful malicious execution is direct evidence that the endpoint crossed from exposure into compromise. A connection or blocked attempt alone does not establish that.'};let s=0,o='<h3>Comprehension Feedback</h3>';Object.keys(a).forEach((q,i)=>{let x=document.querySelector(`input[name=${q}]:checked`);let ok=x&&x.value===a[q];if(ok)s++;o+=`<div class="result ${ok?'correct':'incorrect'}"><b>Question ${i+1}: ${ok?'Correct':'Review this concept'}</b><br>${exp[q]}</div>`});let f=document.getElementById('quizfb');f.innerHTML=`<div class="score">Understanding: ${s}/3</div>`+o;f.classList.add('show');document.getElementById('bar').style.width='100%'}
+renderTabs();renderLog();renderRows();
+</script></body></html>
