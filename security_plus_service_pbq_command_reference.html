@@ -1,0 +1,294 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SEC-2041 | Linux Service Containment PBQ</title><style>
+:root{font-family:Inter,Segoe UI,Arial,sans-serif;color:#e9f1f7;background:#08131f}*{box-sizing:border-box}body{margin:0}header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 22px;background:#112438;border-bottom:1px solid #31516a}h1{font-size:19px;margin:0}h2{font-size:17px;margin:0 0 12px}h3{font-size:14px;margin:12px 0 8px}small,.muted{color:#9db4c6}.tag{background:#27495c;padding:6px 10px;border-radius:20px;font-size:12px}.layout{display:grid;grid-template-columns:minmax(230px,300px) minmax(370px,1fr) minmax(280px,330px);gap:14px;padding:14px;max-width:1700px;margin:auto}.panel{background:#102336;border:1px solid #29465c;border-radius:12px;padding:17px;min-width:0}.panel p,.panel li{font-size:13px;line-height:1.6}.panel ul{padding-left:19px}.notice{background:#183447;border-left:3px solid #5dc8dc;padding:12px;border-radius:5px;margin-top:14px}.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}button{cursor:pointer;background:#245779;border:1px solid #4d7994;color:white;padding:10px 12px;border-radius:7px;font-weight:600}button:hover{background:#32749b}button.active{background:#0e9cb2;color:#041820}button:disabled{opacity:.4;cursor:not-allowed}.terminal{background:#07110f;border:1px solid #285b4c;border-radius:8px;min-height:420px;display:flex;flex-direction:column}.output{white-space:pre-wrap;overflow:auto;flex:1;max-height:480px;min-height:350px;padding:16px;font:12px/1.65 Consolas,Monaco,monospace;color:#c8e5d6}.command{display:flex;align-items:center;gap:8px;padding:10px;border-top:1px solid #244f44}.prompt{font:12px Consolas,monospace;color:#63df9c;white-space:nowrap}.command input{flex:1;min-width:0;background:transparent;color:white;border:0;outline:0;font:13px Consolas,monospace}.task{border:1px solid #34556a;padding:12px;border-radius:8px;margin:10px 0}.task.done{border-color:#319779}.task strong{font-size:13px}.task p{margin:6px 0}.task input,.task textarea,.task select{width:100%;background:#071a2a;border:1px solid #3c6179;color:#f1f8ff;padding:9px;border-radius:6px;margin:7px 0;font:13px Segoe UI,Arial}.task textarea{min-height:70px;resize:vertical}.action{width:100%;background:#13a0b1;color:#061923;margin-top:8px}.secondary{background:#253e54}.status{font-size:12px;color:#a7cad9;margin-top:7px}.progress{height:7px;background:#264054;border-radius:10px;overflow:hidden;margin:12px 0}.bar{height:100%;background:#23c3a6;width:0;transition:width .2s}.logbox{white-space:pre-wrap;background:#071a2a;border-radius:8px;padding:14px;font:12px/1.7 Consolas,monospace;overflow:auto;min-height:380px;color:#d6e5ed}.hidden{display:none}.result{border:1px solid #416d83;padding:13px;border-radius:8px;margin:10px 0;font-size:13px;line-height:1.6}.pass{border-color:#3ba985}.fail{border-color:#e8a65a}.hint{color:#f0cf88}.footer{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:14px}@media(max-width:1100px){.layout{grid-template-columns:1fr 1fr}.workspace{grid-column:1/-1;grid-row:2}}@media(max-width:650px){.layout{display:block}.panel{margin-bottom:12px}header{flex-wrap:wrap}.output{min-height:260px}.terminal{min-height:340px}}
+</style></head><body><header><div><h1>Security+ SY0-701 · Linux Service Containment</h1><small>Original interactive PBQ · Incident SEC-2041</small></div><div><span class="tag" id="mode">ASSESSMENT MODE · Feedback at submission</span></div></header><main class="layout"><aside class="panel"><h2>Incident briefing</h2><p><b>Priority:</b> High &nbsp; <b>Host:</b> legacy-server</p><p>The SOC detected repeated FTP authentication failures followed by an unexpected successful anonymous login. An incident commander authorized containment of the unauthorized FTP service.</p><div class="notice"><b>Operational constraints</b><ul><li>Preserve SSH access for remote administration.</li><li>Stop the FTP service immediately.</li><li>Prevent the FTP service from starting on reboot.</li><li>Do not restart the service until explicitly authorized.</li><li>Document evidence before closing the ticket.</li></ul></div><h3>Reference commands</h3><p><code>systemctl status SERVICE</code><br><code>systemctl is-active SERVICE</code><br><code>sudo systemctl stop SERVICE</code><br><code>sudo systemctl start SERVICE</code><br><code>sudo systemctl disable SERVICE</code><br><code>sudo systemctl enable SERVICE</code></p><p class="muted">This simulated terminal does not run commands on your device. Explore commands and examine realistic responses.</p></aside><section class="panel workspace"><div class="tabs"><button class="active" data-tab="terminal">Terminal</button><button data-tab="logs">Security logs</button><button data-tab="notes">Service inventory</button></div><div id="terminalTab"><div class="terminal"><div class="output" id="output" aria-live="polite">SEC-2041 · Analyst session opened
+Type help to see available commands.
+
+</div><form class="command" id="terminalForm"><span class="prompt">analyst@legacy-server:~$</span><input id="cmd" autocomplete="off" spellcheck="false" aria-label="Terminal command" placeholder="Type a command"/><button type="button" id="runCommand">Run Command</button></form></div><div class="footer"><button class="secondary" id="clear">Clear terminal</button><small>Hint: investigate before changing services.</small></div></div><div id="logsTab" class="hidden"><h2>Security event excerpts</h2><p class="muted">Mixed host telemetry · chronological events · routine activity and suspicious indicators</p><div class="logbox">Oct 26 08:47:02 legacy-server systemd[1]: Started System Logging Service.
+Oct 26 08:47:04 legacy-server systemd[1]: Started OpenSSH server daemon.
+Oct 26 08:47:06 legacy-server systemd[1]: Started nginx web server.
+Oct 26 08:48:17 legacy-server CRON[671]: (root) CMD (/usr/local/sbin/healthcheck)
+Oct 26 08:50:02 legacy-server auditd[505]: Audit daemon initialized; backlog limit 8192
+Oct 26 08:54:31 legacy-server sshd[811]: Accepted publickey for deploy from 192.0.2.61 port 49118 ssh2
+Oct 26 08:54:31 legacy-server sshd[811]: pam_unix(sshd:session): session opened for user deploy
+Oct 26 08:57:03 legacy-server nginx[702]: 192.0.2.77 - - "GET /health HTTP/1.1" 200
+Oct 26 09:00:01 legacy-server CRON[992]: (root) CMD (/usr/local/sbin/rotate-app-logs)
+Oct 26 09:03:41 legacy-server sshd[1088]: Failed password for invalid user backup from 203.0.113.74 port 50211 ssh2
+Oct 26 09:03:43 legacy-server sshd[1088]: Connection closed by invalid user backup 203.0.113.74 port 50211 [preauth]
+Oct 26 09:05:20 legacy-server fail2ban-server[621]: INFO [sshd] Found 203.0.113.74
+Oct 26 09:07:19 legacy-server systemd[1]: Started Daily apt download activities.
+Oct 26 09:09:54 legacy-server nginx[702]: 192.0.2.77 - - "GET /api/status HTTP/1.1" 200
+Oct 26 09:11:46 legacy-server auditd[505]: USER_CMD acct=deploy exe=/usr/bin/systemctl cmd="systemctl status nginx" res=success
+Oct 26 09:12:14 legacy-server systemd[1]: Started vsftpd FTP server.
+Oct 26 09:12:14 legacy-server systemd[1]: vsftpd.service: Main process started (PID 1250)
+Oct 26 09:12:15 legacy-server kernel: IPv4 TCP listener established on 0.0.0.0:21
+Oct 26 09:13:50 legacy-server vsftpd[1250]: [anonymous] FAIL LOGIN: Client "198.51.100.23"
+Oct 26 09:13:54 legacy-server vsftpd[1250]: [anonymous] FAIL LOGIN: Client "198.51.100.23"
+Oct 26 09:13:58 legacy-server vsftpd[1250]: [anonymous] FAIL LOGIN: Client "198.51.100.23"
+Oct 26 09:14:02 legacy-server vsftpd[1250]: [anonymous] OK LOGIN: Client "198.51.100.23"
+Oct 26 09:14:03 legacy-server vsftpd[1250]: [anonymous] OK DOWNLOAD: Client "198.51.100.23", "/pub/readme.txt", 482 bytes
+Oct 26 09:14:05 legacy-server vsftpd[1250]: [anonymous] FAIL UPLOAD: Client "198.51.100.23", "/incoming/diag.sh", permission denied
+Oct 26 09:14:06 legacy-server vsftpd[1250]: [anonymous] FTP session closed: Client "198.51.100.23"
+Oct 26 09:14:18 legacy-server rsyslogd[488]: action 'forward-to-siem' resumed (module 'omfwd')
+Oct 26 09:14:33 legacy-server nginx[702]: 192.0.2.77 - - "GET /health HTTP/1.1" 200
+Oct 26 09:15:18 legacy-server sshd[811]: Accepted publickey for analyst from 192.0.2.44 port 51011 ssh2
+Oct 26 09:15:18 legacy-server sshd[811]: pam_unix(sshd:session): session opened for user analyst
+Oct 26 09:15:42 legacy-server sudo[1732]: analyst : TTY=pts/0 ; COMMAND=/usr/bin/systemctl status vsftpd
+Oct 26 09:16:03 legacy-server node_exporter[609]: metrics scrape completed, HTTP 200
+Oct 26 09:16:22 legacy-server auditd[505]: USER_ACCT acct=analyst res=success
+Oct 26 09:17:04 legacy-server systemd[1]: Started Session 41 of User analyst.</div><p class="muted">The IP addresses shown are documentation-only examples.</p></div><div id="notesTab" class="hidden"><h2>Approved service inventory</h2><div class="logbox">SERVICE          BUSINESS OWNER       AUTHORIZATION        PURPOSE
+sshd             Infrastructure       APPROVED - CRITICAL   Remote administration
+cron             Platform Operations  APPROVED              Scheduled maintenance
+rsyslog          Security Operations  APPROVED - CRITICAL   Centralized system logging
+systemd-journald Platform Operations  APPROVED - CRITICAL   Local event journal
+systemd-resolved Infrastructure       APPROVED              DNS resolution
+systemd-timesyncd Infrastructure      APPROVED              Time synchronization
+networking       Infrastructure       APPROVED - CRITICAL   Network connectivity
+nginx            Web Operations       APPROVED              Reverse proxy / HTTPS
+postgresql       Database Operations  APPROVED              Application database
+redis-server     App Engineering      APPROVED              Application cache
+fail2ban         Security Operations  APPROVED              Brute-force mitigation
+auditd           Security Operations  APPROVED - CRITICAL   Security audit trail
+unattended-upgrades Platform Ops       APPROVED              Security updates
+node-exporter    Observability        APPROVED              Host metrics
+ufw              Security Operations  APPROVED              Host firewall
+avahi-daemon     Infrastructure       UNDER REVIEW          Local discovery
+cups             Workplace IT         EXCEPTION - LIMITED  Print service (restricted)
+vsftpd           None                 UNAUTHORIZED          Legacy FTP listener
+
+SERVICE POLICY:
+- Remote administrative SSH access must remain available.
+- Preserve logging, network connectivity, and audit services.
+- Unauthorized FTP services must be stopped and disabled.
+- "Under review" and "exception" are not automatic containment approvals.
+- Record evidence of service status before and after action.</div></div></section><aside class="panel"><h2>Analyst tasks</h2><small>Complete the investigation. No correctness indicators appear until you submit.</small><div class="progress"><div class="bar" id="bar"></div></div><small id="progressLabel">0 of 5 task responses entered</small><div class="task"><strong>1 · Identify the service</strong><p>Enter the unauthorized service name based on available evidence.</p><input id="service" placeholder="Service name"/></div><div class="task"><strong>2 · Identify suspicious activity</strong><p>Enter the external IP address seen in the FTP security logs.</p><input id="ip" placeholder="IPv4 address"/></div><div class="task"><strong>3 · Contain and prevent restart</strong><p>Use the terminal to stop the service and disable its automatic startup. Terminal actions are recorded.</p><small id="actionStatus">Actions recorded: 0</small></div><div class="task"><strong>4 · Validate critical services</strong><p>Use the terminal to verify that FTP is inactive and SSH remains active after containment.</p><small id="verifyStatus">Verification checks recorded: 0</small></div><div class="task"><strong>5 · Analyst handoff</strong><p>Choose the appropriate next action and explain why.</p><select id="decision"><option value="">Choose a response...</option><option value="restart">Restart FTP to verify the service can recover</option><option value="close">Close the incident without additional investigation</option><option value="preserve">Preserve logs, document containment, and escalate for remediation</option><option value="stopssh">Stop SSH to prevent all remote access</option></select><textarea id="rationale" placeholder="Explain the security and availability tradeoff..."></textarea></div><button class="action" id="submit">Submit PBQ for Evaluation</button><button class="secondary" id="reset" style="width:100%;margin-top:8px">Reset simulation</button><div id="results" aria-live="polite"></div></aside></main><script>
+(()=>{'use strict';let state={ftp:true,ftpEnabled:true,ssh:true,sshEnabled:true,history:[],observations:[],submitted:false};const $=id=>document.getElementById(id), out=$('output');function write(s){out.textContent+=s+'\n';out.scrollTop=out.scrollHeight}function record(kind){state.observations.push(kind);update()}function update(){let n=[$('service').value.trim(),$('ip').value.trim(),state.history.some(x=>x.includes('stop vsftpd'))&&state.history.some(x=>x.includes('disable vsftpd')),state.observations.includes('ftp-inactive')&&state.observations.includes('ssh-active'),$('decision').value&&$('rationale').value.trim()].filter(Boolean).length;$('bar').style.width=(n/5*100)+'%';$('progressLabel').textContent=n+' of 5 task responses entered';$('actionStatus').textContent='Actions recorded: '+state.history.filter(x=>/^(stop|disable|start|enable|restart) /.test(x)).length;$('verifyStatus').textContent='Verification checks recorded: '+state.observations.length}function serviceStatus(name){let ftp=name==='vsftpd',active=ftp?state.ftp:state.ssh,enabled=ftp?state.ftpEnabled:state.sshEnabled;return `● ${name}.service - ${ftp?'vsftpd FTP server':'OpenSSH server'}\n     Loaded: loaded (/lib/systemd/system/${name}.service; ${enabled?'enabled':'disabled'})\n     Active: ${active?'active (running)':'inactive (dead)'}\n     Main PID: ${active?(ftp?'1250':'811'):'-'}\n     CGroup: /system.slice/${name}.service`}
+function run(raw){let s=raw.trim().replace(/\s+/g,' ');if(!s)return;write('analyst@legacy-server:~$ '+s);let parts=s.split(' ');if(parts[0]==='sudo')parts.shift();let cmd=parts[0],verb=parts[1],name=(parts[2]||'').replace(/\.service$/,'');if(name==='ssh')name='sshd';let result='';if(s==='help' || s.startsWith('help ') || s==='man' || s.startsWith('man ')){
+  const topic=s.replace(/^(help|man)\s*/, '').trim().toLowerCase();
+  const docs={
+    systemctl:`SYSTEMCTL(1)                SYSTEM MANAGER                SYSTEMCTL(1)
+NAME
+    systemctl - inspect and control systemd services and units
+SYNOPSIS
+    systemctl COMMAND [SERVICE]
+    sudo systemctl COMMAND SERVICE
+DESCRIPTION
+    Query the current state of services or request a state change.
+    A service's running state and boot-time enablement are separate.
+COMMANDS
+    status SERVICE      Show loaded, active, and process details.
+    is-active SERVICE   Print active/inactive status.
+    is-enabled SERVICE  Print enabled/disabled startup setting.
+    list-units --type=service   List loaded service units.
+    stop SERVICE        Stop a currently running service.
+    start SERVICE       Start a service.
+    restart SERVICE     Stop and then start a service.
+    disable SERVICE     Remove automatic startup enablement.
+    enable SERVICE      Configure automatic startup.
+NOTES
+    Changes generally require sudo. Disabling does not stop a running
+    service. Stopping does not automatically disable startup.
+EXAMPLES (generic)
+    systemctl status nginx
+    systemctl is-active nginx
+    sudo systemctl stop nginx
+SEE ALSO
+    help journalctl, help ps, help ss`,
+    journalctl:`JOURNALCTL(1)                SYSTEM LOGS                JOURNALCTL(1)
+NAME
+    journalctl - query events recorded by the systemd journal
+SYNOPSIS
+    journalctl -u SERVICE
+DESCRIPTION
+    Display events associated with a service unit. Review timestamps,
+    messages, process identifiers, and failures to build a timeline.
+OPTIONS
+    -u SERVICE    Filter entries for the specified systemd unit.
+EXAMPLE (generic)
+    journalctl -u nginx
+ANALYST NOTE
+    A log entry is evidence of an event, not proof of attacker identity.
+    Correlate with other telemetry before drawing conclusions.`,
+    ps:`PS(1)                     PROCESS STATUS                     PS(1)
+NAME
+    ps - report a snapshot of running processes
+SYNOPSIS
+    ps -ef
+    ps aux
+OPTIONS
+    -e    Include all processes.
+    -f    Show full-format information (UID, PID, PPID, CMD).
+    aux   BSD-style detailed process listing.
+FIELDS
+    PID   Process identifier; PPID parent process identifier.
+    CMD   Command that started the process.
+ANALYST NOTE
+    A process name alone is not proof of malicious activity.`,
+    ss:`SS(8)                     SOCKET STATISTICS                  SS(8)
+NAME
+    ss - inspect network socket information
+SYNOPSIS
+    ss -antp
+    ss -tulnp
+OPTIONS
+    -a  All sockets     -n  Numeric addresses/ports
+    -t  TCP sockets     -u  UDP sockets
+    -l  Listening       -p  Associated process (when permitted)
+OUTPUT
+    LISTEN indicates a listening socket; ESTAB an established session.
+ANALYST NOTE
+    Compare ports, remote endpoints, and process ownership with policy.`,
+    lsof:`LSOF(8)                   LIST OPEN FILES                   LSOF(8)
+NAME
+    lsof - list open files, including network sockets
+SYNOPSIS
+    lsof -i
+OPTIONS
+    -i    Show network-related open files and sockets.
+FIELDS
+    COMMAND  Process name; PID  Process identifier;
+    NAME     Network endpoint or socket details.
+ANALYST NOTE
+    Useful for linking network activity to a running process.`,
+    clear:`CLEAR                     TERMINAL DISPLAY                   CLEAR
+NAME
+    clear - clear visible terminal output
+SYNOPSIS
+    clear
+NOTES
+    Clearing the display does not undo actions or reset the simulation.`,
+    help:`SUPPORTED COMMANDS — SECURITY OPERATIONS REFERENCE
+
+COMMAND / SYNTAX                  PURPOSE
+────────────────────────────────────────────────────────────────
+help                               Display this command reference
+help <command>                     Detailed usage for a command
+man <command>                      Open a command manual page
+
+SERVICE MANAGEMENT
+systemctl status <service>         Display service status and details
+systemctl is-active <service>      Check whether a service is running
+systemctl is-enabled <service>     Check automatic startup setting
+systemctl list-units --type=service
+                                   List loaded system services
+sudo systemctl stop <service>      Stop a running service
+sudo systemctl start <service>     Start a stopped service
+sudo systemctl restart <service>   Restart a service
+sudo systemctl disable <service>   Disable automatic startup
+sudo systemctl enable <service>    Enable automatic startup
+
+PROCESS INVESTIGATION
+ps -ef                              Display running processes and PIDs
+ps aux                             Show detailed process information
+lsof -i                            Show processes using network sockets
+
+NETWORK INVESTIGATION
+ss -antp                           Show TCP connections and process IDs
+ss -tulnp                          Show listening TCP/UDP ports
+
+SECURITY LOGS
+journalctl -u <service>            Display logs for a system service
+
+TERMINAL
+clear                              Clear visible terminal output
+
+REFERENCE EXAMPLES
+help systemctl                     Read service management reference
+help journalctl                    Read logging reference
+help ps                            Read process reference
+help ss                            Read socket reference
+help lsof                          Read open-files reference
+
+NOTES
+<service> is a placeholder for the service name.
+Some Linux commands require elevated privileges.
+This is a simulated Linux terminal; only supported commands run.
+The reference explains tools without identifying the incident answer.`,
+    'kill':`KILL(1)                      PROCESS CONTROL                   KILL(1)
+NAME
+    kill - send a signal to a process
+SYNOPSIS
+    kill <PID>
+    kill -9 <PID>
+DESCRIPTION
+    Default SIGTERM requests graceful termination. SIGKILL (-9)
+    forces termination and may prevent cleanup.
+NOTE
+    This simulation does not execute kill commands.`,
+    'grep':`GREP(1)                       TEXT SEARCH                      GREP(1)
+NAME
+    grep - find lines matching a pattern
+SYNOPSIS
+    grep <pattern> <file>
+    ps -ef | grep <pattern>
+NOTE
+    This simulation does not execute grep pipelines.`,
+    'netstat':`NETSTAT(8)                  NETWORK STATUS                    NETSTAT(8)
+NAME
+    netstat - inspect network connections and listening ports
+SYNOPSIS
+    netstat -antp
+NOTE
+    ss is the modern alternative on many Linux distributions.
+    This simulation supports ss rather than netstat.`,
+    'cat':`CAT(1)                        FILE OUTPUT                       CAT(1)
+NAME
+    cat - display file contents
+SYNOPSIS
+    cat <file>
+NOTE
+    This simulation does not provide general file-reading commands.`,
+    'head':`HEAD(1)                       FILE OUTPUT                      HEAD(1)
+NAME
+    head - display the beginning of a file
+SYNOPSIS
+    head <file>
+NOTE
+    This simulation does not execute head.`,
+    'tail':`TAIL(1)                       FILE OUTPUT                      TAIL(1)
+NAME
+    tail - display the end of a file
+SYNOPSIS
+    tail <file>
+NOTE
+    This simulation does not execute tail.`,
+    'chmod':`CHMOD(1)                    FILE PERMISSIONS                  CHMOD(1)
+NAME
+    chmod - change file permission bits
+SYNOPSIS
+    chmod <mode> <file>
+NOTE
+    This simulation does not modify filesystem permissions.`,
+    'ip':`IP(8)                    NETWORK CONFIGURATION                IP(8)
+NAME
+    ip - show or manage networking configuration
+SYNOPSIS
+    ip addr
+NOTE
+    This simulation does not execute ip commands.`,
+    'ping':`PING(8)                  NETWORK REACHABILITY                 PING(8)
+NAME
+    ping - test reachability using ICMP echo requests
+SYNOPSIS
+    ping <host>
+NOTE
+    ICMP may be filtered. This simulation does not execute ping.`,
+    'traceroute':`TRACEROUTE(8)                NETWORK PATH                 TRACEROUTE(8)
+NAME
+    traceroute - display the network path to a destination
+SYNOPSIS
+    traceroute <host>
+NOTE
+    This simulation does not execute traceroute.`
+  };
+  result=docs[(topic||'help').split(' ')[0]]||`No manual entry for "${topic}" in this training shell.\nType help to see available reference topics.`;
+}
+else if(s==='clear'){out.textContent='';return}
+else if(s==='ps -ef'||s==='ps aux'){result='UID     PID  PPID CMD\nroot      811     1 /usr/sbin/sshd -D\nroot     1250     1 '+(state.ftp?'/usr/sbin/vsftpd':'[vsftpd stopped]')+'\nroot      920     1 /usr/sbin/cron -f';}
+else if(s==='ss -antp'||s==='sudo ss -antp'||s==='ss -tulnp'||s==='sudo ss -tulnp'){result='State   Local Address:Port  Peer Address:Port  Process\n'+(state.ftp?'LISTEN  0.0.0.0:21         0.0.0.0:*          vsftpd,pid=1250\n':'')+(state.ssh?'LISTEN  0.0.0.0:22         0.0.0.0:*          sshd,pid=811\n':'')+(state.ftp?'ESTAB   192.0.2.10:21      198.51.100.23:56421 vsftpd,pid=1250':'');}
+else if(s==='lsof -i'||s==='sudo lsof -i'){result=(state.ftp?'vsftpd 1250 root TCP *:21 (LISTEN)\nvsftpd 1250 root TCP 192.0.2.10:21->198.51.100.23:56421 (ESTABLISHED)\n':'')+(state.ssh?'sshd 811 root TCP *:22 (LISTEN)':'');}
+else if(s==='journalctl -u vsftpd'||s==='sudo journalctl -u vsftpd'){result='Oct 26 09:12:14 legacy-server systemd[1]: Started vsftpd FTP server.\nOct 26 09:12:14 legacy-server systemd[1]: vsftpd.service: Main process started (PID 1250)\nOct 26 09:12:15 legacy-server kernel: IPv4 TCP listener established on 0.0.0.0:21\nOct 26 09:13:50 legacy-server vsftpd[1250]: [anonymous] FAIL LOGIN: Client "198.51.100.23"\nOct 26 09:13:54 legacy-server vsftpd[1250]: [anonymous] FAIL LOGIN: Client "198.51.100.23"\nOct 26 09:13:58 legacy-server vsftpd[1250]: [anonymous] FAIL LOGIN: Client "198.51.100.23"\nOct 26 09:14:02 legacy-server vsftpd[1250]: [anonymous] OK LOGIN: Client "198.51.100.23"\nOct 26 09:14:03 legacy-server vsftpd[1250]: [anonymous] OK DOWNLOAD: Client "198.51.100.23", "/pub/readme.txt", 482 bytes\nOct 26 09:14:05 legacy-server vsftpd[1250]: [anonymous] FAIL UPLOAD: Client "198.51.100.23", "/incoming/diag.sh", permission denied\nOct 26 09:14:06 legacy-server vsftpd[1250]: [anonymous] FTP session closed: Client "198.51.100.23"\nOct 26 09:15:42 legacy-server sudo[1732]: analyst : TTY=pts/0 ; COMMAND=/usr/bin/systemctl status vsftpd';}
+else if(cmd==='systemctl'&&verb==='list-units'){result=`sshd.service loaded ${state.ssh?'active running':'inactive dead'}\ncron.service loaded active running\nrsyslog.service loaded active running\nsystemd-journald.service loaded active running\nsystemd-resolved.service loaded active running\nsystemd-timesyncd.service loaded active running\nnetworking.service loaded active exited\nnginx.service loaded active running\npostgresql.service loaded active running\nredis-server.service loaded active running\nfail2ban.service loaded active running\nauditd.service loaded active running\nunattended-upgrades.service loaded active running\nnode-exporter.service loaded active running\nufw.service loaded active exited\navahi-daemon.service loaded active running\ncups.service loaded inactive dead\nvsftpd.service loaded ${state.ftp?'active running':'inactive dead'}`}
+else if(cmd==='systemctl'&&['status','is-active','is-enabled','stop','start','restart','disable','enable'].includes(verb)){if(!['vsftpd','sshd'].includes(name)){result='Unit '+(name||'UNKNOWN')+'.service could not be found.'}else if(verb==='status'){result=serviceStatus(name);record(name==='vsftpd'?(state.ftp?'ftp-active':'ftp-inactive'):(state.ssh?'ssh-active':'ssh-inactive'))}else if(verb==='is-active'){let active=name==='vsftpd'?state.ftp:state.ssh;result=active?'active':'inactive';record(name==='vsftpd'?(active?'ftp-active':'ftp-inactive'):(active?'ssh-active':'ssh-inactive'))}else if(verb==='is-enabled'){result=(name==='vsftpd'?state.ftpEnabled:state.sshEnabled)?'enabled':'disabled';record(name+'-boot-checked')}else{if(!raw.trim().startsWith('sudo ')){result='Failed to '+verb+' '+name+'.service: Access denied (requires administrative privileges).'}else{if(name==='vsftpd'){if(verb==='stop')state.ftp=false;if(verb==='start'||verb==='restart')state.ftp=true;if(verb==='disable')state.ftpEnabled=false;if(verb==='enable')state.ftpEnabled=true}else{if(verb==='stop')state.ssh=false;if(verb==='start'||verb==='restart')state.ssh=true;if(verb==='disable')state.sshEnabled=false;if(verb==='enable')state.sshEnabled=true}state.history.push(verb+' '+name);result=verb==='disable'?'Removed service startup symlink.':verb==='enable'?'Created service startup symlink.':'Command completed.';update()}}}
+else{result='Command not supported in this simulation. Type help for available commands.'}write(result+'\n')}
+function executeTerminal(){const field=$('cmd');const v=field.value.trim();if(!v){write('Enter a command first. Example: systemctl status vsftpd\n');field.focus();return;}field.value='';try{run(v)}catch(err){write('Simulation error: '+err.message)}field.focus()}$('runCommand').addEventListener('click',executeTerminal);$('terminalForm').addEventListener('submit',e=>{e.preventDefault();executeTerminal()});$('cmd').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();executeTerminal()}});$('clear').onclick=()=>out.textContent='';document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));['terminal','logs','notes'].forEach(t=>$(t+'Tab').classList.toggle('hidden',b.dataset.tab!==t))});['service','ip','decision','rationale'].forEach(id=>$(id).addEventListener('input',update));$('submit').onclick=()=>{if(state.submitted)return;state.submitted=true;let answers=[{label:'Identify unauthorized service',ok:/^vsftpd(\.service)?$/i.test($('service').value.trim()),why:'The inventory lists vsftpd as unauthorized, and the logs associate it with FTP authentication activity.'},{label:'Identify suspicious remote IP',ok:$('ip').value.trim()==='198.51.100.23',why:'The FTP authentication log repeatedly records 198.51.100.23. A remote IP alone is an indicator, not proof of attribution.'},{label:'Contain FTP and disable startup',ok:!state.ftp&&!state.ftpEnabled&&state.history.some(x=>x==='stop vsftpd')&&state.history.some(x=>x==='disable vsftpd'),why:'Stopping vsftpd ends the active service. Disabling it separately prevents automatic startup. Both are required by this ticket.'},{label:'Verify FTP and SSH availability',ok:state.observations.includes('ftp-inactive')&&state.observations.includes('ssh-active')&&state.ssh,why:'Verify that FTP is inactive and SSH is still active after containment. Service status and listening ports can provide complementary evidence.'},{label:'Appropriate analyst handoff',ok:$('decision').value==='preserve'&&$('rationale').value.trim().length>=25,why:'Preserving evidence and escalating for remediation meets the incident requirements. Restarting FTP or stopping SSH would conflict with the ticket.'}];let score=answers.filter(x=>x.ok).length;let html=`<h3>Evaluation: ${score}/5 tasks</h3><p class="muted">Detailed feedback is released only after submission.</p>`;answers.forEach((a,i)=>{html+=`<div class="result ${a.ok?'pass':'fail'}"><b>${a.ok?'✓':'✕'} Task ${i+1}: ${a.label}</b><p>${a.why}</p></div>`});if(state.history.some(x=>/^(stop|disable|restart) sshd$/.test(x)))html+='<div class="result fail"><b>Operational risk:</b> You modified the required SSH service. Avoid interrupting authorized remote administration.</div>';html+='<button class="secondary" onclick="location.reload()">Retry scenario</button>';$('results').innerHTML=html;$('submit').disabled=true;$('mode').textContent='EVALUATION COMPLETE';$('results').scrollIntoView({behavior:'smooth',block:'nearest'})};$('reset').onclick=()=>{if(confirm('Reset all terminal actions and responses?'))location.reload()};update()})();
+</script></body></html>
